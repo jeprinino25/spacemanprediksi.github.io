@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediksi Spaceman Lengkap</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0e0e0e; color: #ffffff; text-align: center; padding: 40px; }
+        textarea { width: 90%%; height: 100px; font-size: 16px; margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; margin: 5px; }
+        .result, .history { margin-top: 20px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h2>📊 Prediksi Spaceman dari Riwayat</h2>
+    <p>Masukkan multiplier terakhir, pisahkan dengan koma (misal: 1.02, 1.15, 2.35,...)</p>
+    <textarea id="multInput" placeholder="Contoh: 1.05,1.20,3.40,1.00,..."></textarea><br>
+    <button onclick="saveData()">Simpan Riwayat</button>
+    <button onclick="loadData()">Muat Riwayat</button>
+    <button onclick="clearData()">Hapus Semua</button><br><br>
+    <button onclick="analyze()">Lihat Prediksi</button>
+
+    <div class="result" id="hasil"></div>
+
+    <script>
+        function saveData() {
+            const data = document.getElementById("multInput").value;
+            localStorage.setItem("spacemanMultiData", data);
+            alert("✅ Riwayat disimpan!");
+        }
+
+        function loadData() {
+            const data = localStorage.getItem("spacemanMultiData");
+            if (data) {
+                document.getElementById("multInput").value = data;
+            } else {
+                alert("❌ Belum ada riwayat tersimpan.");
+            }
+        }
+
+        function clearData() {
+            localStorage.removeItem("spacemanMultiData");
+            document.getElementById("multInput").value = "";
+            document.getElementById("hasil").innerHTML = "";
+        }
+
+        function analyze() {
+            const input = document.getElementById("multInput").value;
+            const arr = input.split(",").map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+            if (arr.length < 3) {
+                document.getElementById("hasil").innerText = "❌ Masukkan minimal 3 multiplier valid.";
+                return;
+            }
+
+            const last3 = arr.slice(-3);
+            const lowCrash = arr.filter(x => x < 1.3).length;
+            const highCrash = arr.filter(x => x >= 5).length;
+            const avg = arr.reduce((a,b) => a + b, 0) / arr.length;
+
+            let result = `📈 Rata-rata multiplier: ${avg.toFixed(2)}<br>`;
+            result += `💥 Total crash rendah (<1.3x): ${lowCrash}<br>`;
+            result += `🚀 Total multiplier tinggi (≥5x): ${highCrash}<br><br>`;
+
+            if (lowCrash >= 5) {
+                result += "✅ Saran: Main cepat & CASHOUT di 1.3x (banyak crash rendah)";
+            } else if (last3[0] > 3 && last3[1] > 3 && last3[2] > 3) {
+                result += "⚠️ Saran: SKIP ronde ini (kemungkinan crash turun)";
+            } else if (avg > 2) {
+                result += "✅ Saran: CASHOUT di 1.6x–2.0x (stabil bagus)";
+            } else {
+                result += "⚠️ Saran: Hati-hati, CASHOUT cepat (game tidak stabil)";
+            }
+
+            document.getElementById("hasil").innerHTML = result;
+        }
+    </script>
+</body>
+</html>
